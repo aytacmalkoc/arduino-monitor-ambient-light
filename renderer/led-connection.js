@@ -1,4 +1,9 @@
-import { STORAGE, MAX_SERIAL_LOG_CHARS } from './constants.js';
+import {
+  STORAGE,
+  MAX_SERIAL_LOG_CHARS,
+  DEFAULT_BAUD,
+  VALID_BAUD_RATES,
+} from './constants.js';
 import { state } from './state.js';
 import {
   portSelect,
@@ -15,7 +20,6 @@ import {
   connectionDot,
   connectionLabel,
   serialLogOutput,
-  chkAutoConnect,
   chkCircadian,
   chkWinNightLightLed,
   chkCheckUpdates,
@@ -30,6 +34,106 @@ import {
   stopWelcomeLedAnimation,
   maybeStartWelcomeLedAnimation,
 } from './screens/welcome.js';
+
+const BAUD_SET = new Set(VALID_BAUD_RATES);
+
+function normalizeBaud(v) {
+  const n = Number(v);
+  return BAUD_SET.has(n) ? n : null;
+}
+
+/** Windows: COM3 ile \\.\COM3 veya büyük/küçük harf farkını tolere eder. */
+function normalizeSerialPath(p) {
+  if (p == null || typeof p !== 'string') return '';
+  let s = p.trim();
+  if (/^\\\\\.\\/i.test(s)) s = s.slice(4);
+  return s.toUpperCase();
+}
+
+function portPathsMatch(a, b) {
+  return normalizeSerialPath(a) === normalizeSerialPath(b);
+}
+
+export function persistSerialBaud(baudNum) {
+  if (!BAUD_SET.has(baudNum)) return;
+  try {
+    localStorage.setItem(STORAGE.BAUD, String(baudNum));
+  } catch (_) {
+    /* quota / private mode */
+  }
+  if (window.appSettings) {
+    window.appSettings.save({ serial: { baudRate: baudNum } }).catch(() => {});
+  }
+}
+
+async function persistSerialAfterConnect(portPath, baudNum) {
+  if (!BAUD_SET.has(baudNum)) return;
+  try {
+    localStorage.setItem(STORAGE.PORT, portPath);
+    localStorage.setItem(STORAGE.BAUD, String(baudNum));
+  } catch (_) {
+    /* quota / private mode */
+  }
+  if (window.appSettings) {
+    try {
+      await window.appSettings.save({
+        serial: { baudRate: baudNum, lastPortPath: portPath },
+      });
+    } catch (_) {
+      /* disk yazılamadı */
+    }
+  }
+}
+
+/** Açılışta otomatik bağlan — diske await ile yaz (kapanmadan önce kayıp olmasın). */
+export async function persistAutoConnectPreferenceAsync(enabled) {
+  const v = enabled ? '1' : '0';
+  try {
+    localStorage.setItem(STORAGE.AUTO, v);
+  } catch (_) {
+    /* quota / private mode */
+  }
+  const el = document.getElementById('chkAutoConnect');
+  if (el) el.checked = enabled;
+  if (window.appSettings) {
+    try {
+      await window.appSettings.save({
+        serial: { autoConnect: Boolean(enabled) },
+      });
+    } catch (_) {
+      /* disk yazılamadı */
+    }
+  }
+}
+
+export async function hydrateAutoConnectFromDisk() {
+  if (localStorage.getItem(STORAGE.AUTO) !== null) return;
+  if (!window.appSettings) return;
+  try {
+    const disk = await window.appSettings.load();
+    if (disk.serial && disk.serial.autoConnect === true) {
+      localStorage.setItem(STORAGE.AUTO, '1');
+      const el = document.getElementById('chkAutoConnect');
+      if (el) el.checked = true;
+    }
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+export async function hydratePortFromDisk() {
+  if (localStorage.getItem(STORAGE.PORT)) return;
+  if (!window.appSettings) return;
+  try {
+    const disk = await window.appSettings.load();
+    const p = disk.serial && disk.serial.lastPortPath;
+    if (typeof p === 'string' && p.trim()) {
+      localStorage.setItem(STORAGE.PORT, p.trim());
+    }
+  } catch (_) {
+    /* ignore */
+  }
+}
 
 export function delay(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -121,9 +225,37 @@ export function persistLedState() {
 
 export function getBaud() {
   const v = baudSelect ? Number(baudSelect.value) : NaN;
-  if (Number.isFinite(v)) return v;
-  const saved = Number(localStorage.getItem(STORAGE.BAUD));
-  return Number.isFinite(saved) ? saved : 115200;
+  if (Number.isFinite(v) && BAUD_SET.has(v)) return v;
+  const saved = normalizeBaud(localStorage.getItem(STORAGE.BAUD));
+  if (saved != null) return saved;
+  return DEFAULT_BAUD;
+}
+
+export async function hydrateBaudSettings() {
+  if (!baudSelect) return;
+  let baud = normalizeBaud(localStorage.getItem(STORAGE.BAUD));
+  if (baud == null && window.appSettings) {
+    try {
+      const disk = await window.appSettings.load();
+      baud = normalizeBaud(disk.serial && disk.serial.baudRate);
+      if (baud != null) {
+        try {
+          localStorage.setItem(STORAGE.BAUD, String(baud));
+        } catch (_) {
+          /* ignore */
+        }
+      }
+    } catch (_) {
+      /* ignore */
+    }
+  }
+  if (baud == null) baud = DEFAULT_BAUD;
+  baudSelect.value = String(baud);
+  try {
+    localStorage.setItem(STORAGE.BAUD, String(baud));
+  } catch (_) {
+    /* quota / private mode */
+  }
 }
 
 export function scheduleSend() {
@@ -139,12 +271,9 @@ export function scheduleSend() {
 }
 
 export function loadStoredSettings() {
-  const baud = localStorage.getItem(STORAGE.BAUD);
-  if (baud && baudSelect) {
-    baudSelect.value = baud;
-  }
-  if (chkAutoConnect) {
-    chkAutoConnect.checked = localStorage.getItem(STORAGE.AUTO) === '1';
+  const autoEl = document.getElementById('chkAutoConnect');
+  if (autoEl) {
+    autoEl.checked = localStorage.getItem(STORAGE.AUTO) === '1';
   }
   if (chkCircadian) {
     chkCircadian.checked = localStorage.getItem(STORAGE.CIRCADIAN) === '1';
@@ -188,8 +317,11 @@ export async function refreshPorts() {
       select.appendChild(opt);
     }
     const last = localStorage.getItem(STORAGE.PORT);
-    if (last && Array.from(select.options).some((o) => o.value === last)) {
-      select.value = last;
+    if (last) {
+      const match = Array.from(select.options).find(
+        (o) => o.value && portPathsMatch(o.value, last)
+      );
+      if (match) select.value = match.value;
     }
     setStatus(`${ports.length} port bulundu.`);
   } catch (e) {
@@ -214,8 +346,7 @@ export async function connect() {
     persistLedState();
     await window.arduino.open({ path, baudRate });
     state.connected = true;
-    localStorage.setItem(STORAGE.PORT, path);
-    if (baudSelect) localStorage.setItem(STORAGE.BAUD, String(baudRate));
+    await persistSerialAfterConnect(path, baudRate);
     if (btnConnect) btnConnect.disabled = true;
     if (btnDisconnect) btnDisconnect.disabled = false;
     select.disabled = true;
@@ -232,6 +363,73 @@ export async function connect() {
     state.connected = false;
     setStatus(e.message || String(e), true);
     updateConnectionBadge();
+  }
+}
+
+/** Açılışta: port listesini güncelle, kayıtlı porta seç ve (isteğe bağlı) bağlan. */
+export async function maybeAutoConnectLastPort() {
+  if (!window.arduino) return;
+
+  let disk = {};
+  if (window.appSettings) {
+    try {
+      disk = await window.appSettings.load();
+    } catch (_) {
+      disk = {};
+    }
+  }
+  const serial = disk.serial && typeof disk.serial === 'object' ? disk.serial : {};
+  const wantAuto =
+    serial.autoConnect === true || localStorage.getItem(STORAGE.AUTO) === '1';
+  if (!wantAuto) return;
+
+  if (
+    serial.autoConnect !== true &&
+    localStorage.getItem(STORAGE.AUTO) === '1' &&
+    window.appSettings
+  ) {
+    try {
+      await window.appSettings.save({ serial: { autoConnect: true } });
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  try {
+    await hydrateBaudSettings();
+    loadStoredSettings();
+  } catch (_) {
+    /* ignore */
+  }
+
+  let lastPort = (localStorage.getItem(STORAGE.PORT) || '').trim();
+  if (!lastPort && typeof serial.lastPortPath === 'string') {
+    lastPort = serial.lastPortPath.trim();
+  }
+  if (!lastPort) return;
+  try {
+    localStorage.setItem(STORAGE.PORT, lastPort);
+  } catch (_) {
+    /* ignore */
+  }
+
+  const select = portSelect || document.getElementById('portSelect');
+  if (!select) return;
+
+  const pickMatchingOption = () =>
+    Array.from(select.options).find(
+      (o) => o.value && portPathsMatch(o.value, lastPort)
+    );
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await delay(500);
+    await refreshPorts();
+    const match = pickMatchingOption();
+    if (match) {
+      select.value = match.value;
+      await connect();
+      return;
+    }
   }
 }
 

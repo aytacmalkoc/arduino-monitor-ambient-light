@@ -81,7 +81,7 @@ function closeSerialWithLedsOff() {
   });
 }
 
-function openSerialPort({ path: portPath, baudRate = 115200 }) {
+function openSerialPort({ path: portPath, baudRate = 9600 }) {
   return new Promise((resolve, reject) => {
     serialPort = new SerialPort(
       {
@@ -120,7 +120,7 @@ function openSerialPort({ path: portPath, baudRate = 115200 }) {
 }
 
 async function prepareSerialOpen() {
-  await closeSerial();
+  await closeSerialWithLedsOff();
   serialWriteQueue = Promise.resolve();
 }
 

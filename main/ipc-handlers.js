@@ -11,7 +11,7 @@ const {
 const {
   SerialPort,
   enqueueSerialWrite,
-  closeSerial,
+  closeSerialWithLedsOff,
   openSerialPort,
   prepareSerialOpen,
   isSerialOpen,
@@ -81,7 +81,7 @@ function registerIpcHandlers() {
     return { ok: true };
   });
 
-  ipcMain.handle('serial:close', () => closeSerial());
+  ipcMain.handle('serial:close', () => closeSerialWithLedsOff());
 
   ipcMain.handle('app:get-version', () => app.getVersion());
 
@@ -117,6 +117,22 @@ function registerIpcHandlers() {
     }
     if (partial.api && typeof partial.api === 'object') {
       cur.api = { ...(cur.api || {}), ...partial.api };
+    }
+    if (partial.serial && typeof partial.serial === 'object') {
+      const next = { ...(cur.serial || {}), ...partial.serial };
+      if (next.baudRate != null) {
+        const br = Number(next.baudRate);
+        next.baudRate =
+          Number.isFinite(br) && br >= 300 && br <= 2000000 ? Math.floor(br) : undefined;
+      }
+      if (next.lastPortPath != null) {
+        const s = String(next.lastPortPath).trim();
+        next.lastPortPath = s.length ? s.slice(0, 256) : undefined;
+      }
+      if (next.autoConnect != null) {
+        next.autoConnect = Boolean(next.autoConnect);
+      }
+      cur.serial = next;
     }
     writeSettingsFile(cur);
     return { ok: true };

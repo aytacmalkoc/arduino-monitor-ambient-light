@@ -1,3 +1,8 @@
+/** Seri port hızı: UI ve `getBaud` yedek değeri (kayıtlı değer yoksa). */
+export const DEFAULT_BAUD = 9600;
+
+export const VALID_BAUD_RATES = [9600, 19200, 38400, 57600, 115200];
+
 export const STORAGE = {
   BAUD: 'led-app-baud',
   PORT: 'led-app-lastPort',
