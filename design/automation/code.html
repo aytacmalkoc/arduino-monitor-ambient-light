@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Excalibur Advanced Control Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed-variant": "#54546f",
+                        "primary-fixed-dim": "#ccd4ee",
+                        "inverse-primary": "#dae2fd",
+                        "on-error-container": "#752121",
+                        "secondary-fixed-dim": "#c7d5ed",
+                        "outline-variant": "#a9b4b9",
+                        "on-secondary-fixed": "#324053",
+                        "tertiary-container": "#d9d7f8",
+                        "on-primary-fixed-variant": "#535b71",
+                        "primary": "#565e74",
+                        "tertiary-fixed-dim": "#cbc9e9",
+                        "on-primary": "#f7f7ff",
+                        "surface-variant": "#d9e4ea",
+                        "on-background": "#2a3439",
+                        "on-secondary-fixed-variant": "#4e5c71",
+                        "outline": "#717c82",
+                        "surface-container-high": "#e1e9ee",
+                        "secondary-dim": "#465468",
+                        "on-secondary-container": "#455367",
+                        "on-tertiary": "#fbf7ff",
+                        "on-surface": "#2a3439",
+                        "surface-container": "#e8eff3",
+                        "surface-dim": "#cfdce3",
+                        "secondary-container": "#d5e3fc",
+                        "background": "#f7f9fb",
+                        "primary-dim": "#4a5268",
+                        "on-secondary": "#f8f8ff",
+                        "primary-container": "#dae2fd",
+                        "secondary": "#526074",
+                        "on-tertiary-fixed": "#373851",
+                        "surface-container-highest": "#d9e4ea",
+                        "on-tertiary-container": "#4a4a65",
+                        "on-primary-fixed": "#373f54",
+                        "tertiary-fixed": "#d9d7f8",
+                        "on-surface-variant": "#566166",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#9a9d9f",
+                        "on-error": "#fff7f6",
+                        "error-container": "#fe8983",
+                        "surface-container-low": "#f0f4f7",
+                        "primary-fixed": "#dae2fd",
+                        "surface-bright": "#f7f9fb",
+                        "surface-tint": "#565e74",
+                        "secondary-fixed": "#d5e3fc",
+                        "inverse-surface": "#0b0f10",
+                        "tertiary-dim": "#51516c",
+                        "error-dim": "#4e0309",
+                        "on-primary-container": "#4a5167",
+                        "error": "#9f403d",
+                        "tertiary": "#5d5d78",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full sticky top-0 h-screen w-64 border-r-0 bg-[#f0f4f7] dark:bg-slate-900 font-manrope tracking-tight font-semibold">
+<div class="p-8">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">lightbulb_circle</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-[#2a3439] dark:text-slate-100">Monitor Ambient Light</h1>
+<p class="text-[10px] text-on-surface-variant opacity-60 uppercase tracking-widest">Monitor Lamp v2.1</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+<span>Controls</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-2 border-[#565e74] text-[#2a3439] dark:text-white bg-white/50 dark:bg-slate-800/50 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span>Automation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span>Advanced</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-8">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 duration-150">
+                    Sync Devices
+                </button>
+<div class="mt-6 flex items-center gap-3 px-4">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-xs text-on-surface-variant font-medium">System Status Indicator</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between px-8 w-full h-16 bg-[#f7f9fb] dark:bg-slate-950 border-b border-[#a9b4b9]/15 backdrop-blur-md bg-opacity-80">
+<div class="flex items-center gap-8">
+<span class="text-lg font-extrabold text-[#2a3439] dark:text-white">EXCALIBUR CONTROL CENTER</span>
+<nav class="hidden md:flex gap-6">
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#566166] opacity-60 hover:text-primary transition-all" href="#">Dashboard</a>
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#565e74] border-b-2 border-[#565e74] hover:text-primary transition-all" href="#">Preset Library</a>
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#566166] opacity-60 hover:text-primary transition-all" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="wifi_tethering">wifi_tethering</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Connected</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="p-8 overflow-y-auto">
+<div class="mb-10 max-w-4xl">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Excalibur Advanced Control Center</h2>
+<p class="text-on-surface-variant leading-relaxed">Precision automation for the modern high-performance workspace. Orchestrate your environment with granular environmental logic.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 max-w-7xl">
+<!-- Circadian Rhythm Card -->
+<div class="md:col-span-8 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between group hover:shadow-lg transition-all border border-transparent hover:border-outline-variant/10">
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined text-3xl" data-icon="wb_sunny" style="font-variation-settings: 'FILL' 1;">wb_sunny</span>
+</div>
+<div>
+<h3 class="text-xl font-bold">Circadian Rhythm</h3>
+<p class="text-sm text-on-surface-variant">Adaptive CCT Kelvin matching</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex gap-4 items-end">
+<div class="flex-1">
+<div class="flex justify-between text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">
+<span>Morning (2700K)</span>
+<span>Noon (6500K)</span>
+<span>Night (2200K)</span>
+</div>
+<div class="h-1.5 w-full bg-gradient-to-r from-orange-200 via-sky-100 to-amber-300 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Dev-Sync Indicator Card -->
+<div class="md:col-span-4 bg-surface-container-lowest p-8 rounded-xl border border-transparent flex flex-col justify-between">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+<h3 class="font-bold">Dev-Sync Status</h3>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border-l-4 border-emerald-500">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold text-on-surface-variant">WEBHOOK BUILD</span>
+<span class="text-[10px] text-emerald-600 font-bold px-1.5 py-0.5 bg-emerald-50 rounded">STABLE</span>
+</div>
+<p class="text-lg font-mono font-bold">SUCCESS</p>
+<p class="text-[10px] text-on-surface-variant mt-2">Last check: 2m ago</p>
+</div>
+</div>
+<!-- Eye Health Timer -->
+<div class="md:col-span-4 bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="visibility">visibility</span>
+<h3 class="font-bold">Eye Health (20-20-20)</h3>
+</div>
+<div class="relative w-32 h-32 mx-auto mb-4 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="120" stroke-width="8"></circle>
+</svg>
+<span class="absolute text-2xl font-bold">14:20</span>
+</div>
+<p class="text-center text-xs text-on-surface-variant">Focus remaining until next break</p>
+</div>
+<!-- Smart Profiles -->
+<div class="md:col-span-8 bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="app_shortcut">app_shortcut</span>
+<h3 class="font-bold">App-based Smart Profiles</h3>
+</div>
+<button class="text-primary text-xs font-bold uppercase tracking-widest hover:underline">Add Rule</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded bg-on-surface flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-lg" data-icon="code">code</span>
+</div>
+<div>
+<p class="text-sm font-bold">VS Code</p>
+<p class="text-[10px] text-on-surface-variant">Deep Work · 4000K · 80%</p>
+</div>
+</div>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded font-bold uppercase">Active</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low/50 rounded-lg opacity-60">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded bg-red-600 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg" data-icon="play_arrow">play_arrow</span>
+</div>
+<div>
+<p class="text-sm font-bold">YouTube</p>
+<p class="text-[10px] text-on-surface-variant">Cinema · 3000K · 40%</p>
+</div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Inactive</span>
+</div>
+</div>
+</div>
+<!-- Advanced Ambilight -->
+<div class="md:col-span-6 bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="vignette">vignette</span>
+<h3 class="font-bold">Advanced Ambilight</h3>
+</div>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-bold mb-2">
+<span>Sampling Rate</span>
+<span>60 FPS</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold mb-2">
+<span>Edge Bias</span>
+<span>High</span>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 text-[10px] font-bold rounded bg-surface-container-low border border-outline-variant/20">Low</button>
+<button class="flex-1 py-2 text-[10px] font-bold rounded bg-surface-container-low border border-outline-variant/20">Mid</button>
+<button class="flex-1 py-2 text-[10px] font-bold rounded bg-primary text-on-primary shadow-sm">High</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Meeting Light -->
+<div class="md:col-span-6 bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="videocam">videocam</span>
+<h3 class="font-bold">Camera Meeting Light</h3>
+</div>
+<p class="text-xs text-on-surface-variant mb-6">Automatically switch to high-CRI front fill when camera is active.</p>
+<div class="flex items-center gap-6">
+<div class="w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center border-4 border-dashed border-outline-variant/30">
+<span class="material-symbols-outlined text-4xl text-outline-variant opacity-40" data-icon="photo_camera">photo_camera</span>
+</div>
+<div class="flex-1 space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-400"></div>
+<span class="text-xs font-medium">Auto-Detection: ON</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-400"></div>
+<span class="text-xs font-medium">Brightness Boost: 100%</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-400"></div>
+<span class="text-xs font-medium">CCT Target: 5200K</span>
+</div>
+</div>
+</div>
+<!-- Abstract background element -->
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

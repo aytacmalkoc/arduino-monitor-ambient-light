@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Excalibur Light Control Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#54546f",
+              "primary-fixed-dim": "#ccd4ee",
+              "inverse-primary": "#dae2fd",
+              "on-error-container": "#752121",
+              "secondary-fixed-dim": "#c7d5ed",
+              "outline-variant": "#a9b4b9",
+              "on-secondary-fixed": "#324053",
+              "tertiary-container": "#d9d7f8",
+              "on-primary-fixed-variant": "#535b71",
+              "primary": "#565e74",
+              "tertiary-fixed-dim": "#cbc9e9",
+              "on-primary": "#f7f7ff",
+              "surface-variant": "#d9e4ea",
+              "on-background": "#2a3439",
+              "on-secondary-fixed-variant": "#4e5c71",
+              "outline": "#717c82",
+              "surface-container-high": "#e1e9ee",
+              "secondary-dim": "#465468",
+              "on-secondary-container": "#455367",
+              "on-tertiary": "#fbf7ff",
+              "on-surface": "#2a3439",
+              "surface-container": "#e8eff3",
+              "surface-dim": "#cfdce3",
+              "secondary-container": "#d5e3fc",
+              "background": "#f7f9fb",
+              "primary-dim": "#4a5268",
+              "on-secondary": "#f8f8ff",
+              "primary-container": "#dae2fd",
+              "secondary": "#526074",
+              "on-tertiary-fixed": "#373851",
+              "surface-container-highest": "#d9e4ea",
+              "on-tertiary-container": "#4a4a65",
+              "on-primary-fixed": "#373f54",
+              "tertiary-fixed": "#d9d7f8",
+              "on-surface-variant": "#566166",
+              "surface": "#f7f9fb",
+              "inverse-on-surface": "#9a9d9f",
+              "on-error": "#fff7f6",
+              "error-container": "#fe8983",
+              "surface-container-low": "#f0f4f7",
+              "primary-fixed": "#dae2fd",
+              "surface-bright": "#f7f9fb",
+              "surface-tint": "#565e74",
+              "secondary-fixed": "#d5e3fc",
+              "inverse-surface": "#0b0f10",
+              "tertiary-dim": "#51516c",
+              "error-dim": "#4e0309",
+              "on-primary-container": "#4a5167",
+              "error": "#9f403d",
+              "tertiary": "#5d5d78",
+              "surface-container-lowest": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .cct-gradient {
+            background: linear-gradient(to right, #ffcc33, #ffffff, #99ccff);
+        }
+        .active-pill {
+            box-shadow: 0 0 0 2px rgba(86, 94, 116, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+<!-- SideNavBar Component (Shared Anchor) -->
+<aside class="flex flex-col h-full sticky top-0 h-screen w-64 border-r-0 bg-[#f0f4f7] dark:bg-slate-900 font-manrope tracking-tight font-semibold shrink-0">
+<div class="px-8 py-10">
+<h1 class="text-xl font-bold text-[#2a3439] dark:text-slate-100 mb-1">Monitor Ambient Light</h1>
+<p class="text-[10px] uppercase tracking-widest opacity-60">Monitor Lamp v2.1</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Active Tab: Controls (Contextually determined as active for this dashboard) -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-2 border-[#565e74] text-[#2a3439] dark:text-white bg-white/50 dark:bg-slate-800/50 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+<span class="text-sm">Controls</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+<span class="text-sm">Automation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings_input_component</span>
+<span class="text-sm">Advanced</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#566166] dark:text-slate-400 opacity-70 hover:bg-[#d9e4ea] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="bg-surface-container-lowest rounded-xl p-4 flex items-center gap-3 mb-6">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="text-xs font-bold">System Status</p>
+<p class="text-[10px] opacity-60">Ready to Sync</p>
+</div>
+</div>
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-lg text-sm font-bold active:scale-95 transition-all">
+                Sync Devices
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto">
+<!-- TopNavBar Component (Shared Anchor) -->
+<header class="flex items-center justify-between px-8 w-full border-b border-[#a9b4b9]/15 bg-[#f7f9fb] dark:bg-slate-950 w-full h-16 backdrop-blur-md bg-opacity-80 sticky top-0 z-10">
+<div class="flex items-center gap-8">
+<span class="text-lg font-extrabold text-[#2a3439] dark:text-white font-headline">Excalibur Control Center</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#565e74] border-b-2 border-[#565e74] py-5" href="#">Dashboard</a>
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#566166] opacity-60 hover:text-primary transition-all py-5" href="#">Preset Library</a>
+<a class="font-manrope uppercase tracking-widest text-xs font-bold text-[#566166] opacity-60 hover:text-primary transition-all py-5" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-manrope uppercase tracking-widest text-[10px] font-bold text-on-surface-variant">Connected</span>
+</div>
+<button class="material-symbols-outlined text-[#565e74] hover:text-primary transition-all">notifications</button>
+<button class="material-symbols-outlined text-[#565e74] hover:text-primary transition-all">wifi_tethering</button>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Page Header (Editorial Style) -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Workspace Illumination</h2>
+<p class="text-on-surface-variant max-w-md leading-relaxed">Adjust your environment to maximize focus and minimize eye strain. Currently using 'Optimal Daylight' profile.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 rounded-lg text-sm font-semibold bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors">Save Preset</button>
+<button class="px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-on-primary hover:bg-primary-dim transition-all">Update All Lamps</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Main Controls Card -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Brightness Section -->
+<section class="bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-dim">light_mode</span>
+<h3 class="text-lg font-bold">Brightness Intensity</h3>
+</div>
+<span class="text-2xl font-black text-primary">85%</span>
+</div>
+<div class="relative flex items-center group">
+<span class="material-symbols-outlined text-on-surface-variant opacity-40 mr-4">wb_sunny</span>
+<div class="relative w-full h-10 flex items-center">
+<div class="absolute w-full h-2 bg-surface-container rounded-full"></div>
+<div class="absolute w-[85%] h-2 bg-primary rounded-full"></div>
+<div class="absolute left-[85%] -translate-x-1/2 w-6 h-6 bg-white border-4 border-primary rounded-full cursor-pointer shadow-lg"></div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant ml-4" style="font-variation-settings: 'FILL' 1;">sunny</span>
+</div>
+<div class="mt-6 flex justify-between text-[11px] font-bold uppercase tracking-widest text-on-surface-variant opacity-60">
+<span>Dim</span>
+<span>Standard</span>
+<span>Max Brilliance</span>
+</div>
+</section>
+<!-- CCT Slider Section -->
+<section class="bg-surface-container-lowest p-8 rounded-xl">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-dim">thermostat</span>
+<h3 class="text-lg font-bold">Color Temperature</h3>
+</div>
+<span class="text-2xl font-black text-primary">5200K</span>
+</div>
+<div class="relative h-10 flex items-center">
+<div class="w-full h-4 rounded-full cct-gradient opacity-80"></div>
+<div class="absolute left-[65%] -translate-x-1/2 w-8 h-8 bg-white border-2 border-outline-variant/30 rounded-full flex items-center justify-center cursor-pointer shadow-md">
+<div class="w-2 h-4 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+<div class="mt-6 flex justify-between text-xs font-medium text-on-surface-variant">
+<div class="text-center">
+<p class="font-bold text-on-surface">3000K</p>
+<p class="text-[10px] opacity-60">Warm White</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-on-surface">4500K</p>
+<p class="text-[10px] opacity-60">Neutral</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-on-surface">6500K</p>
+<p class="text-[10px] opacity-60">Cool Daylight</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Quick Modes & Status -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Quick Modes -->
+<section class="bg-surface-container-low p-6 rounded-xl">
+<h3 class="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-6">Quick Modes</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Focus Mode -->
+<button class="flex flex-col items-center justify-center gap-3 p-5 bg-surface-container-lowest rounded-lg border border-transparent hover:border-primary/20 transition-all group active:scale-95">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<span class="text-sm font-bold">Focus</span>
+</button>
+<!-- Reading Mode -->
+<button class="flex flex-col items-center justify-center gap-3 p-5 bg-surface-container-lowest rounded-lg border border-transparent hover:border-primary/20 transition-all group active:scale-95">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">menu_book</span>
+</div>
+<span class="text-sm font-bold">Reading</span>
+</button>
+<!-- Cinema Mode -->
+<button class="flex flex-col items-center justify-center gap-3 p-5 bg-surface-container-lowest rounded-lg border border-transparent hover:border-primary/20 transition-all group active:scale-95">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">movie</span>
+</div>
+<span class="text-sm font-bold">Cinema</span>
+</button>
+<!-- Night Mode -->
+<button class="flex flex-col items-center justify-center gap-3 p-5 bg-surface-container-lowest rounded-lg border border-transparent hover:border-primary/20 transition-all group active:scale-95">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">bedtime</span>
+</div>
+<span class="text-sm font-bold">Night</span>
+</button>
+</div>
+</section>
+<!-- Advanced Status/Analytics Card -->
+<section class="bg-primary p-6 rounded-xl text-on-primary">
+<div class="flex justify-between items-start mb-6">
+<span class="material-symbols-outlined text-primary-fixed opacity-60">bolt</span>
+<span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2 py-1 rounded">Efficiency</span>
+</div>
+<div class="mb-4">
+<p class="text-xs opacity-70">Daily Consumption</p>
+<p class="text-3xl font-black">1.2 kWh</p>
+</div>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-primary-container"></div>
+</div>
+<p class="mt-4 text-[10px] font-medium leading-tight opacity-60 italic">Your current setting is 12% more efficient than the global average for focus work.</p>
+</section>
+<!-- Preview Card -->
+<div class="relative h-48 rounded-xl overflow-hidden group">
+<img alt="Minimalist office setup" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 transition-all duration-700" data-alt="Minimalist desk setup with warm desk lamp lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLEMnjH9tgS136kjuAI50Bj3FRhkfosGwoN1oHpyJEbRkn0syaASj94Rp1tEHV3pv4DPyFBivkQyJfAJTK0fZ3O0NfBhahxlxcfDtRknCPC8JCEQ44EpvvDY1Afv5u35UJmSjdaGGP0rD-68hcbEkkdjwD4nRs9uE6AfMq6izHT9yqvFXHFXWtNAYrne6celIjgEd6nvsAl0s_-44CF42wkvzOo6cZp8EGHPNk6UfVXd_nDyOMAb_VATafIU6Mtw526x55_aqVGaRT"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60"></div>
+<div class="absolute bottom-4 left-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-lg flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface">Visual Comfort Index</span>
+<span class="text-xs font-black text-emerald-600">Optimal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
