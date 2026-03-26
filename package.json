@@ -1,0 +1,35 @@
+{
+  "name": "arduino-monitor-ambient-light",
+  "productName": "Monitor Ambient Light",
+  "version": "1.0.0",
+  "description": "Monitor Ambient Light — Arduino RGB LED control over serial (COM) on Windows",
+  "author": "Aytac Malkoc",
+  "homepage": "https://github.com/aytacmalkoc/arduino-monitor-ambient-light",
+  "license": "MIT",
+  "main": "main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "build:css": "tailwindcss -i ./input.css -o ./styles.css --minify",
+    "watch:css": "tailwindcss -i ./input.css -o ./styles.css --watch",
+    "rebuild": "electron-rebuild -f -w serialport",
+    "postinstall": "electron-rebuild -f -w serialport"
+  },
+  "keywords": [
+    "electron",
+    "arduino",
+    "serial"
+  ],
+  "devDependencies": {
+    "@fontsource/inter": "^5.2.5",
+    "@fontsource/manrope": "^5.2.5",
+    "@tailwindcss/forms": "^0.5.9",
+    "electron": "^33.2.0",
+    "electron-rebuild": "^3.2.9",
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "serialport": "^12.0.0",
+    "winreg": "^1.2.5"
+  }
+}
