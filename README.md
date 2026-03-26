@@ -1,5 +1,7 @@
 # Monitor Ambient Light
 
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-6BA539?style=flat-square&logo=openapiinitiative&logoColor=white)](docs/api/openapi.yaml) [![Postman](https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman&logoColor=white)](docs/api/monitor-ambient-light.postman_collection.json)
+
 This repository is an Electron application developed as a **hobby project**: **RGB LED** control over **Arduino** via serial (COM) on Windows, an optional local HTTP API, and desktop-capture–based ambient light sync.
 
 ---

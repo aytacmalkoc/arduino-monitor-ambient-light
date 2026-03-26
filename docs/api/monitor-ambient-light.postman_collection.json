@@ -1,0 +1,200 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Monitor Ambient Light API",
+    "description": "Yerel HTTP API (127.0.0.1). Uygulama ayarlarından HTTP API'yi etkinleştirin; `baseUrl` ve `apiKey` değişkenlerini doldurun.\n\nKimlik doğrulama: `Authorization: Bearer {{apiKey}}` veya `X-API-Key: {{apiKey}}`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:37890"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/v1/health",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/health",
+            "description": "Kimlik doğrulama gerektirmez."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "State & LED",
+      "item": [
+        {
+          "name": "GET /api/v1/state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/state",
+            "description": "Tam durum: serialConnected, led, theme, presets, api."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /api/v1/led",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"color\": \"#ffeedd\",\n  \"brightness\": 80,\n  \"kelvin\": 4500\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/led",
+            "description": "Alanlar isteğe bağlı; kelvin verilirse renk buna göre hesaplanır."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Theme & Presets",
+      "item": [
+        {
+          "name": "PUT /api/v1/theme",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theme\": \"dark\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/theme",
+            "description": "theme: system | light | dark"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /api/v1/presets",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"presets\": []\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/presets",
+            "description": "presets bir dizi olmalıdır."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Animation",
+      "item": [
+        {
+          "name": "GET /api/v1/animations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/animations",
+            "description": "Geçerli animasyon modları: { \"modes\": [...] }"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/animation (start)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"start\",\n  \"mode\": \"breathing\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/animation"
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/animation (stop)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"stop\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/animation"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth alternatif (X-API-Key)",
+      "item": [
+        {
+          "name": "GET /api/v1/state (X-API-Key)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/state",
+            "description": "Bearer yerine X-API-Key ile örnek istek."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

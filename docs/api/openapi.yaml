@@ -1,0 +1,424 @@
+openapi: 3.0.3
+info:
+  title: Monitor Ambient Light HTTP API
+  description: |
+    Yerel Electron uygulamasının HTTP API’si. Sunucu yalnızca `127.0.0.1` üzerinde dinler; uygulama ayarlarından etkinleştirilmelidir.
+    Varsayılan port: **37890** (`DEFAULT_API_PORT`).
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:{port}
+    description: Yerel API (ayarlardaki port)
+    variables:
+      port:
+        default: "37890"
+
+tags:
+  - name: Health
+  - name: State
+  - name: LED
+  - name: Theme
+  - name: Presets
+  - name: Animation
+
+paths:
+  /api/v1/health:
+    get:
+      tags: [Health]
+      summary: Sağlık kontrolü
+      description: Kimlik doğrulama gerektirmez.
+      operationId: getHealth
+      security: []
+      responses:
+        "200":
+          description: Servis çalışıyor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/v1/state:
+    get:
+      tags: [State]
+      summary: Tam uygulama durumu
+      description: Seri bağlantısı, LED, tema, ön ayarlar ve API özet bilgisi.
+      operationId: getState
+      responses:
+        "200":
+          description: Mevcut durum
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StateSnapshot"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/led:
+    put:
+      tags: [LED]
+      summary: LED rengi ve parlaklığı güncelle
+      description: |
+        Gövde alanları isteğe bağlıdır; `mergeLedState` ile mevcut durumla birleştirilir.
+        `kelvin` verilirse renk Kelvin’e göre hesaplanır ve `color` üzerine yazar.
+      operationId: putLed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LedPatch"
+            examples:
+              minimal:
+                value: {}
+              full:
+                value:
+                  color: "#ffeedd"
+                  brightness: 80
+                  kelvin: 4500
+      responses:
+        "200":
+          description: Güncellenmiş LED durumu
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, led]
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  led:
+                    $ref: "#/components/schemas/LedState"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/theme:
+    put:
+      tags: [Theme]
+      summary: Uygulama temasını ayarla
+      operationId: putTheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ThemeRequest"
+      responses:
+        "200":
+          description: Tema güncellendi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, theme]
+                properties:
+                  ok:
+                    type: boolean
+                  theme:
+                    $ref: "#/components/schemas/ThemeMode"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/presets:
+    put:
+      tags: [Presets]
+      summary: Ön ayar listesini değiştir
+      description: Dizi doğrudan ayarlara yazılır; öğe şeması uygulama tarafında serbesttir.
+      operationId: putPresets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PresetsRequest"
+      responses:
+        "200":
+          description: Kaydedildi
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, count]
+                properties:
+                  ok:
+                    type: boolean
+                  count:
+                    type: integer
+                    minimum: 0
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/animations:
+    get:
+      tags: [Animation]
+      summary: Geçerli animasyon modları listesi
+      operationId: getAnimations
+      responses:
+        "200":
+          description: Mod isimleri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnimationsListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/v1/animation:
+    post:
+      tags: [Animation]
+      summary: Animasyonu başlat veya durdur
+      operationId: postAnimation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnimationCommand"
+            examples:
+              start:
+                value:
+                  action: start
+                  mode: breathing
+              stop:
+                value:
+                  action: stop
+      responses:
+        "200":
+          description: Komut kabul edildi
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/AnimationStartResponse"
+                  - $ref: "#/components/schemas/AnimationStopResponse"
+        "400":
+          description: Geçersiz action veya mod
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ErrorBody"
+                  - type: object
+                    properties:
+                      error:
+                        type: string
+                      modes:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/AnimationMode"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API key
+      description: `Authorization: Bearer <apiKey>`
+    apiKeyHeader:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Ham API anahtarı
+
+  responses:
+    BadRequest:
+      description: İstek gövdesi veya alanlar geçersiz
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    Unauthorized:
+      description: API anahtarı eksik veya hatalı
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+    ServiceUnavailable:
+      description: API anahtarı yapılandırılmamış
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorBody"
+
+  schemas:
+    ErrorBody:
+      type: object
+      properties:
+        error:
+          type: string
+
+    HealthResponse:
+      type: object
+      required: [ok, service]
+      properties:
+        ok:
+          type: boolean
+          example: true
+        service:
+          type: string
+          example: monitor-ambient-light-api
+
+    LedState:
+      type: object
+      description: Saklanan LED durumu (string alanlar)
+      properties:
+        color:
+          type: string
+          example: "#ffffff"
+          description: Normalize edilmiş 6 haneli hex
+        brightness:
+          type: string
+          example: "100"
+          description: 0–100 yüzde
+        kelvin:
+          type: string
+          example: "5200"
+          description: 3000–6500 aralığına sıkıştırılır
+
+    LedPatch:
+      type: object
+      properties:
+        color:
+          type: string
+          description: "#rrggbb" veya "#rgb"
+        brightness:
+          type: number
+          description: 0–100
+        kelvin:
+          type: number
+          description: 3000–6500; verilirse renk buna göre ayarlanır
+
+    ThemeMode:
+      type: string
+      enum: [system, light, dark]
+
+    ThemeRequest:
+      type: object
+      required: [theme]
+      properties:
+        theme:
+          $ref: "#/components/schemas/ThemeMode"
+
+    PresetsRequest:
+      type: object
+      required: [presets]
+      properties:
+        presets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    StateSnapshot:
+      type: object
+      properties:
+        serialConnected:
+          type: boolean
+        led:
+          $ref: "#/components/schemas/LedState"
+        theme:
+          $ref: "#/components/schemas/ThemeMode"
+        presets:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        api:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            port:
+              type: integer
+              example: 37890
+
+    AnimationMode:
+      type: string
+      enum:
+        - breathing
+        - heartbeat
+        - flicker
+        - crossfade
+        - randomJump
+        - pastelCycle
+        - strobe
+        - police
+        - sos
+        - sineWave
+        - sawtooth
+        - squareWave
+        - analogCycle
+        - complementaryJump
+        - lightning
+        - tvGlow
+        - candleFlame
+        - lavaMorph
+        - neonGlitch
+        - pwmDither
+        - screenAmbient
+
+    AnimationsListResponse:
+      type: object
+      required: [modes]
+      properties:
+        modes:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnimationMode"
+
+    AnimationCommand:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [start, stop]
+        mode:
+          $ref: "#/components/schemas/AnimationMode"
+      description: action=start için mode zorunludur
+
+    AnimationStartResponse:
+      type: object
+      required: [ok, action, mode]
+      properties:
+        ok:
+          type: boolean
+        action:
+          type: string
+          enum: [start]
+        mode:
+          $ref: "#/components/schemas/AnimationMode"
+
+    AnimationStopResponse:
+      type: object
+      required: [ok, action]
+      properties:
+        ok:
+          type: boolean
+        action:
+          type: string
+          enum: [stop]
+
+security:
+  - bearerAuth: []
+  - apiKeyHeader: []
