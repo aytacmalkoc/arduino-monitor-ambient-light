@@ -10,13 +10,11 @@ import {
   btnRefresh,
   btnConnect,
   btnDisconnect,
-  chkAutoConnect,
   chkCircadian,
   chkWinNightLightLed,
   chkCheckUpdates,
   chkLaunchLogin,
   appVersionLabel,
-  portSelect,
   activeProfileName,
   btnClearSerialLog,
   baudSelect,
@@ -35,6 +33,12 @@ import {
   appendSerialLog,
   updateConnectionBadge,
   loadStoredSettings,
+  hydrateBaudSettings,
+  hydratePortFromDisk,
+  hydrateAutoConnectFromDisk,
+  persistSerialBaud,
+  persistAutoConnectPreferenceAsync,
+  maybeAutoConnectLastPort,
 } from './led-connection.js';
 import { hydratePresetsFromDisk } from './core/presets.js';
 import {
@@ -155,13 +159,15 @@ window.addEventListener('hashchange', () => {
 
 if (baudSelect) {
   baudSelect.addEventListener('change', () => {
-    localStorage.setItem(STORAGE.BAUD, baudSelect.value);
+    const n = Number(baudSelect.value);
+    if (Number.isFinite(n)) persistSerialBaud(n);
   });
 }
 
-if (chkAutoConnect) {
-  chkAutoConnect.addEventListener('change', () => {
-    localStorage.setItem(STORAGE.AUTO, chkAutoConnect.checked ? '1' : '0');
+const chkAutoConnectEl = document.getElementById('chkAutoConnect');
+if (chkAutoConnectEl) {
+  chkAutoConnectEl.addEventListener('change', () => {
+    void persistAutoConnectPreferenceAsync(chkAutoConnectEl.checked);
   });
 }
 
@@ -222,6 +228,11 @@ if (btnClearSerialLog) {
 
 async function init() {
   try {
+    await Promise.all([hydratePortFromDisk(), hydrateAutoConnectFromDisk()]);
+  } catch (e) {
+    console.error('Kayıtlı seri ayarları yüklenemedi:', e);
+  }
+  try {
     await refreshPorts();
   } catch (e) {
     console.error('İlk port taraması başarısız:', e);
@@ -238,6 +249,7 @@ async function init() {
     setupWelcomeSplash();
     await loadLedState();
     await hydratePresetsFromDisk();
+    await hydrateBaudSettings();
     loadStoredSettings();
     syncSwatch();
     if (brightPctDisplay && brightness) {
@@ -269,15 +281,6 @@ async function init() {
       if (chkLaunchLogin) chkLaunchLogin.checked = localStorage.getItem(STORAGE.LAUNCH) === '1';
     }
 
-    const psAuto = portSelect || document.getElementById('portSelect');
-    if (chkAutoConnect && chkAutoConnect.checked && window.arduino && psAuto) {
-      const last = localStorage.getItem(STORAGE.PORT);
-      const hasPort = last && Array.from(psAuto.options).some((o) => o.value === last);
-      if (hasPort && psAuto.value) {
-        await connect();
-      }
-    }
-
     parseHash();
   } catch (e) {
     console.error('init:', e);
@@ -288,6 +291,12 @@ async function init() {
     }
   } finally {
     void initHttpApiSettingsPanel();
+  }
+
+  try {
+    await maybeAutoConnectLastPort();
+  } catch (e) {
+    console.error('Otomatik bağlanma:', e);
   }
 }
 

@@ -44,7 +44,7 @@ This repository is an Electron application developed as a **hobby project**: **R
 
 - Line format: `r,g,b,p\n` — `r,g,b` ∈ [0,255], `p` brightness percentage.
 - Example: `255,240,200,80`
-- Default **115200 baud** on the Arduino side; must match your firmware.
+- Default **9600 baud** on the Arduino side and in the app; both must match (you can select another rate in the app if you change `Serial.begin` in firmware).
 
 ---
 

@@ -559,7 +559,7 @@
                         Teknik bilgi (64×64, seri hızı, DRM)
                       </summary>
                       <p class="mt-2 leading-relaxed pl-0.5">
-                        Tam ekran önce 64×64’e küçültülerek analiz edilir (düşük gecikme). Seri çıkış en fazla ~20 Hz (50 ms); Arduino 115200 baud ile uyumludur. DRM içerikler siyah görünebilir.
+                        Tam ekran önce 64×64’e küçültülerek analiz edilir (düşük gecikme). Seri çıkış en fazla ~20 Hz (50 ms); baud hızı Donanım ekranındaki seçimle aynı olmalıdır (varsayılan 9600). DRM içerikler siyah görünebilir.
                       </p>
                     </details>
                     <div
@@ -714,11 +714,11 @@
                 <div>
                   <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider" for="baudSelect">Baud</label>
                   <select id="baudSelect" class="mt-2 w-full bg-surface-container-highest border-0 rounded-lg py-3 px-4 text-sm focus:ring-2 focus:ring-primary">
-                    <option value="115200" selected>115200</option>
-                    <option value="57600">57600</option>
-                    <option value="38400">38400</option>
+                    <option value="9600" selected>9600</option>
                     <option value="19200">19200</option>
-                    <option value="9600">9600</option>
+                    <option value="38400">38400</option>
+                    <option value="57600">57600</option>
+                    <option value="115200">115200</option>
                   </select>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 /*
   Electron / led.py ile uyumlu protokol:
   Seri: "r,g,b,p\n"  (r,g,b: 0-255, p: parlaklık % 0-100)
-  115200 baud (yüksek kare hızı için; gerekirse 9600’a düşürülebilir)
+  Varsayılan 9600 baud (uygulama ile aynı; gerekirse 115200’e çıkarılabilir)
   PWM pinleri: 9=kırmızı, 10=yeşil, 11=mavi (Arduino Uno)
 */
 const int PIN_R = 9;
@@ -9,7 +9,7 @@ const int PIN_G = 10;
 const int PIN_B = 11;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(PIN_R, OUTPUT);
   pinMode(PIN_G, OUTPUT);
   pinMode(PIN_B, OUTPUT);
