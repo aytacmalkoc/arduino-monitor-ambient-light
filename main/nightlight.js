@@ -1,5 +1,14 @@
 const { BrowserWindow } = require('electron');
-const Registry = require('winreg');
+
+/** Yalnızca Windows’ta yükle; diğer platformlarda paket yüklemesi tetiklenmez. */
+function getWinregRegistry() {
+  if (process.platform !== 'win32') return null;
+  try {
+    return require('winreg');
+  } catch (_) {
+    return null;
+  }
+}
 
 /** @see https://github.com/nathanbabcock/nightlight-cli/blob/main/src/nightlight.ts */
 const NIGHT_LIGHT_STATE_KEY_PATH =
@@ -18,6 +27,8 @@ function hexToBytes(hex) {
 }
 
 function winregKeyExists(keyPath) {
+  const Registry = getWinregRegistry();
+  if (!Registry) return Promise.resolve(false);
   return new Promise((resolve) => {
     const reg = new Registry({ hive: Registry.HKCU, key: keyPath });
     reg.keyExists((err, exists) => {
@@ -28,6 +39,8 @@ function winregKeyExists(keyPath) {
 }
 
 function winregGetData(keyPath) {
+  const Registry = getWinregRegistry();
+  if (!Registry) return Promise.reject(new Error('winreg unavailable'));
   return new Promise((resolve, reject) => {
     const reg = new Registry({ hive: Registry.HKCU, key: keyPath });
     reg.get('Data', (err, item) => {
