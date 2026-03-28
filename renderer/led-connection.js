@@ -3,6 +3,8 @@ import {
   MAX_SERIAL_LOG_CHARS,
   DEFAULT_BAUD,
   VALID_BAUD_RATES,
+  LED_KELVIN_MIN,
+  LED_KELVIN_MAX,
 } from './constants.js';
 import { state } from './state.js';
 import {
@@ -23,11 +25,15 @@ import {
   chkCircadian,
   chkWinNightLightLed,
   chkCheckUpdates,
+  kelvinDisplay,
+  brightPctDisplay,
 } from './dom.js';
 import {
   buildPayload,
   buildPayloadFromPersistedStorage,
   normalizeStoredHex,
+  kelvinToRgb,
+  rgbToHex,
 } from './color-utils.js';
 import { stopLedAnimation } from './animations/throttle-send.js';
 import {
@@ -197,6 +203,47 @@ export function updateConnectionBadge() {
 export function syncSwatch() {
   if (!swatch || !colorPick) return;
   swatch.style.background = colorPick.value;
+}
+
+export function touchUserLedControl() {
+  if (state.applyingAutomationSync) return;
+  if (window.automationApi && typeof window.automationApi.notifyManual === 'function') {
+    window.automationApi.notifyManual().catch(() => {});
+  }
+}
+
+/**
+ * Ana süreç otomasyonundan gelen LED; seri zaten yazıldı — yalnızca UI ve disk eşlemesi.
+ */
+export function applyLedFromAutomationPatch(led) {
+  if (!led) return;
+  state.applyingAutomationSync = true;
+  try {
+    if (led.kelvin != null && cctRange && kelvinDisplay) {
+      const raw = Number(led.kelvin);
+      if (Number.isFinite(raw)) {
+        const k = Math.min(LED_KELVIN_MAX, Math.max(LED_KELVIN_MIN, raw));
+        const stepped =
+          Math.round((k - LED_KELVIN_MIN) / 50) * 50 + LED_KELVIN_MIN;
+        cctRange.value = String(stepped);
+        kelvinDisplay.textContent = `${stepped}K`;
+        const { r, g, b } = kelvinToRgb(stepped);
+        if (colorPick) colorPick.value = rgbToHex(r, g, b);
+      }
+    } else if (led.color && colorPick) {
+      const col = normalizeStoredHex(led.color);
+      if (col) colorPick.value = col;
+    }
+    if (led.brightness != null && brightness && brightPctDisplay) {
+      const b = Math.min(100, Math.max(0, Math.round(Number(led.brightness))));
+      brightness.value = String(b);
+      brightPctDisplay.textContent = `${b}%`;
+    }
+    syncSwatch();
+    persistLedState();
+  } finally {
+    state.applyingAutomationSync = false;
+  }
 }
 
 export function persistLedState() {

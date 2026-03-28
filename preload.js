@@ -39,6 +39,17 @@ contextBridge.exposeInMainWorld('appSettings', {
   save: (partial) => ipcRenderer.invoke('settings:save', partial),
 });
 
+contextBridge.exposeInMainWorld('automationApi', {
+  notifyManual: () => ipcRenderer.invoke('automation:manualOverride'),
+  reload: () => ipcRenderer.invoke('automation:reload'),
+  pickExecutable: () => ipcRenderer.invoke('dialog:pickExecutable'),
+  onState: (fn) => {
+    const sub = (_e, payload) => fn(payload);
+    ipcRenderer.on('automation:state', sub);
+    return () => ipcRenderer.removeListener('automation:state', sub);
+  },
+});
+
 contextBridge.exposeInMainWorld('desktopCapture', {
   listSources: () => ipcRenderer.invoke('desktop:getSources'),
   getPrimaryScreenSource: () => ipcRenderer.invoke('desktop:getPrimaryScreenSource'),

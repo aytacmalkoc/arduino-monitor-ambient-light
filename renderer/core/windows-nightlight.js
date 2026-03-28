@@ -12,7 +12,11 @@ import {
   winNightLightLedStatus,
 } from '../dom.js';
 import { kelvinToRgb, rgbToHex } from '../color-utils.js';
-import { scheduleSend, syncSwatch, persistLedState } from '../led-connection.js';
+import {
+  scheduleSend,
+  syncSwatch,
+  persistLedState,
+} from '../led-connection.js';
 import { stopLedAnimation } from '../animations/throttle-send.js';
 
 function easeInOutCubic(t) {
@@ -90,6 +94,7 @@ function startNightLightKelvinTransition(targetStepped) {
 function shouldSkipWindowsNightLightSync() {
   if (state.welcomeSplashActive) return true;
   if (state.ledAnimMode !== null) return true;
+  if (state.automationActive) return true;
   return false;
 }
 

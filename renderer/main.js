@@ -39,6 +39,7 @@ import {
   persistSerialBaud,
   persistAutoConnectPreferenceAsync,
   maybeAutoConnectLastPort,
+  touchUserLedControl,
 } from './led-connection.js';
 import { hydratePresetsFromDisk } from './core/presets.js';
 import {
@@ -49,6 +50,8 @@ import {
   initWindowsNightLightLedSync,
   ensureNightLightMainSubscription,
 } from './core/windows-nightlight.js';
+import { initAutomationPanel } from './screens/automation-ui.js';
+import { initPresetsManager } from './screens/presets-ui.js';
 import { stopLedAnimation } from './animations/throttle-send.js';
 import { startLedAnimation } from './animations/modes.js';
 import { setupWelcomeSplash } from './screens/welcome.js';
@@ -61,6 +64,7 @@ import {
 setupHttpApiRemoteListeners();
 
 colorPick?.addEventListener('input', () => {
+  touchUserLedControl();
   cancelNightLightKelvinTransition();
   stopLedAnimation();
   syncSwatch();
@@ -69,6 +73,7 @@ colorPick?.addEventListener('input', () => {
 });
 
 brightness?.addEventListener('input', () => {
+  touchUserLedControl();
   cancelNightLightKelvinTransition();
   stopLedAnimation();
   if (brightPctDisplay && brightness) {
@@ -80,6 +85,7 @@ brightness?.addEventListener('input', () => {
 
 if (cctRange && kelvinDisplay) {
   cctRange.addEventListener('input', () => {
+    touchUserLedControl();
     cancelNightLightKelvinTransition();
     stopLedAnimation();
     const k = Number(cctRange.value);
@@ -94,6 +100,7 @@ if (cctRange && kelvinDisplay) {
 
 document.querySelectorAll('.quick-mode').forEach((btn) => {
   btn.addEventListener('click', () => {
+    touchUserLedControl();
     cancelNightLightKelvinTransition();
     stopLedAnimation();
     document.querySelectorAll('.quick-mode').forEach((b) => b.classList.remove('quick-mode--active'));
@@ -262,6 +269,8 @@ async function init() {
     updateConnectionBadge();
     ensureNightLightMainSubscription();
     initWindowsNightLightLedSync();
+    initPresetsManager();
+    initAutomationPanel();
 
     if (window.appApi) {
       try {

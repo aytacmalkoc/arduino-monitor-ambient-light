@@ -17,4 +17,7 @@ export const state = {
   nightLightKelvinRafId: null,
   nightLightTransitionCurrentK: null,
   nightLightPendingTarget: null,
+  /** Ana süreç otomasyonu LED’i kontrol ederken Gece Işığı eşlemesi durur */
+  automationActive: false,
+  applyingAutomationSync: false,
 };

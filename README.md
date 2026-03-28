@@ -74,7 +74,7 @@ Reference build: **simplified 5 V RGB LED control (Arduino only)** — Arduino U
 
 ## Renderer notes
 
-- **Hash routing:** `#/controls`, `#/automation`, `#/advanced`, `#/settings`.
+- **Hash routing:** `#/controls`, `#/presets`, `#/automation`, `#/advanced`, `#/settings`.
 - **Animations:** `renderer/animations/`; startup is blocked when `prefers-reduced-motion: reduce`.
 - **Screen ambient color:** `desktopCapture` + `canvas` sampling; analysis ~64×64; serial send throttled (~20 Hz band).
 - **Storage:** `localStorage` keys in `renderer/constants.js`; merged with disk via `appSettings`.
