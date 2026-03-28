@@ -26,6 +26,7 @@ export const btnClearSerialLog = document.getElementById('btnClearSerialLog');
 
 export const viewPanels = {
   controls: document.getElementById('view-controls'),
+  presets: document.getElementById('view-presets'),
   automation: document.getElementById('view-automation'),
   advanced: document.getElementById('view-advanced'),
   settings: document.getElementById('view-settings'),

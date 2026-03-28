@@ -1,4 +1,4 @@
-const { ipcMain, app, desktopCapturer, screen } = require('electron');
+const { ipcMain, app, desktopCapturer, screen, dialog, BrowserWindow } = require('electron');
 const {
   readSettingsFile,
   writeSettingsFile,
@@ -23,6 +23,12 @@ const {
   getHttpApiStatus,
   DEFAULT_API_PORT,
 } = require('./api-server');
+const {
+  mergeAutomation,
+  reloadAutomationConfig,
+  notifyManualOverride,
+} = require('./automation-runner');
+const { getMainWindow } = require('./window');
 
 function registerIpcHandlers() {
   ipcMain.handle('desktop:getSources', async () => {
@@ -134,8 +140,43 @@ function registerIpcHandlers() {
       }
       cur.serial = next;
     }
+    if (partial.automation && typeof partial.automation === 'object') {
+      cur.automation = mergeAutomation({
+        ...(cur.automation || {}),
+        ...partial.automation,
+      });
+    }
     writeSettingsFile(cur);
+    reloadAutomationConfig();
     return { ok: true };
+  });
+
+  ipcMain.handle('automation:manualOverride', () => {
+    notifyManualOverride();
+    return { ok: true };
+  });
+
+  ipcMain.handle('automation:reload', () => {
+    reloadAutomationConfig();
+    return { ok: true };
+  });
+
+  ipcMain.handle('dialog:pickExecutable', async (event) => {
+    const parent = BrowserWindow.fromWebContents(event.sender) || getMainWindow();
+    const { canceled, filePaths } = await dialog.showOpenDialog(parent, {
+      title: 'Uygulama seç',
+      properties: ['openFile'],
+      filters: [
+        { name: 'Uygulama ve betik', extensions: ['exe', 'bat', 'cmd', 'msi', 'msc'] },
+        { name: 'Tüm dosyalar', extensions: ['*'] },
+      ],
+    });
+    if (canceled || !filePaths || !filePaths[0]) {
+      return { ok: false };
+    }
+    const fullPath = filePaths[0];
+    const base = fullPath.replace(/^.*[/\\]/, '') || fullPath;
+    return { ok: true, path: fullPath, basename: base };
   });
 
   ipcMain.handle('api:getStatus', () => {

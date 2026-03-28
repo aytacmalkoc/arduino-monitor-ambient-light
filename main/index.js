@@ -1,6 +1,7 @@
 const { app, BrowserWindow, session } = require('electron');
 const { createWindow } = require('./window');
 const { registerIpcHandlers } = require('./ipc-handlers');
+const { startAutomationRunner } = require('./automation-runner');
 const { stopNightLightWatch } = require('./nightlight');
 const { closeSerialWithLedsOff } = require('./serial');
 const { ensureApiShape, startHttpApi, stopHttpApi } = require('./api-server');
@@ -8,6 +9,7 @@ const { ensureApiShape, startHttpApi, stopHttpApi } = require('./api-server');
 registerIpcHandlers();
 
 app.whenReady().then(() => {
+  startAutomationRunner();
   app.setName('Monitor Ambient Light');
   session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
     callback(permission === 'media' || permission === 'display-capture');

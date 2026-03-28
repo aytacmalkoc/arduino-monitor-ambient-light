@@ -1,0 +1,12 @@
+diff --git a/node_modules/app-builder-lib/out/util/yarn.js b/node_modules/app-builder-lib/out/util/yarn.js
+index b9ee61d..b60c299 100644
+--- a/node_modules/app-builder-lib/out/util/yarn.js
++++ b/node_modules/app-builder-lib/out/util/yarn.js
+@@ -171,6 +171,7 @@ async function rebuild(config, appDir, options) {
+         projectRootPath: await (0, search_module_1.getProjectRootPath)(appDir),
+         mode: config.nativeRebuilder || "sequential",
+         disablePreGypCopy: true,
++        ignoreModules: ["active-win"],
+     };
+     return (0, rebuild_1.rebuild)(rebuildOptions);
+ }

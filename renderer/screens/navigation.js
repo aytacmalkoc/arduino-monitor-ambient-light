@@ -29,7 +29,7 @@ export function showView(view) {
 export function parseHash() {
   const h = (window.location.hash || '#/controls').replace(/^#\/?/, '');
   const name = h.split('/')[0] || 'controls';
-  if (['controls', 'automation', 'advanced', 'settings'].includes(name)) {
+  if (['controls', 'presets', 'automation', 'advanced', 'settings'].includes(name)) {
     showView(name);
   } else {
     showView('controls');
